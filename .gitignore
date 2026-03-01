@@ -1,0 +1,49 @@
+# ===== Java / Maven =====
+backend/**/target/
+*.class
+*.jar
+*.war
+*.log
+hs_err_pid*
+
+# ===== Android =====
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+
+# ===== Node / Vue Admin =====
+admin/node_modules/
+admin/dist/
+admin/.env.local
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== OS =====
+.DS_Store
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ===== Misc =====
+*.bak
+*.tmp
+*.orig
+.env

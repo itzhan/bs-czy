@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 知乎蓝色主题 -->
+    <color name="primary">#0066FF</color>
+    <color name="primary_dark">#0052CC</color>
+    <color name="primary_light">#E8F0FE</color>
+    <color name="accent">#FF6B35</color>
+    <color name="background">#F6F7F8</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#646464</color>
+    <color name="text_hint">#999999</color>
+    <color name="divider">#EEEEEE</color>
+    <color name="like_active">#FF4444</color>
+    <color name="tag_bg">#F0F0F0</color>
+    <color name="tag_text">#4A4A4A</color>
+    <color name="accepted_green">#00C853</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

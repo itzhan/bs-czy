@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 个人中心 Fragment 布局 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <!-- 用户信息头部 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@android:drawable/ic_menu_myplaces" />
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="20sp"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_bio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary" />
+
+        <!-- 统计数据 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_question_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="提问" android:textSize="12sp" android:textColor="@color/text_hint" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_answer_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="回答" android:textSize="12sp" android:textColor="@color/text_hint" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_follower_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="粉丝" android:textSize="12sp" android:textColor="@color/text_hint" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_like_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获赞" android:textSize="12sp" android:textColor="@color/text_hint" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 功能列表 -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
+        app:cardCornerRadius="8dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+            <TextView android:id="@+id/btn_my_questions" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的提问" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+            <TextView android:id="@+id/btn_my_answers" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的回答" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+            <TextView android:id="@+id/btn_my_favorites" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的收藏" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+            <TextView android:id="@+id/btn_my_following" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的关注" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+            <TextView android:id="@+id/btn_logout" android:layout_width="match_parent" android:layout_height="48dp" android:text="  退出登录" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/like_active" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

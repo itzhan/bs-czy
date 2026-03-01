@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 回答列表项：含楼中楼评论区 -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="5dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 作者行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_myplaces" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
+
+                <TextView
+                    android:id="@+id/tv_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_hint" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_accepted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✓ 已采纳"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_accepted_badge"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 回答内容 -->
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/text_primary"
+            android:lineSpacingMultiplier="1.4" />
+
+        <!-- 互动按钮栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+
+            <!-- 点赞 -->
+            <LinearLayout
+                android:id="@+id/btn_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp"
+                android:paddingEnd="12dp"
+                android:background="?selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:id="@+id/iv_like"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_thumb_up" />
+
+                <TextView
+                    android:id="@+id/tv_like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_hint" />
+            </LinearLayout>
+
+            <!-- 评论 -->
+            <LinearLayout
+                android:id="@+id/btn_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp"
+                android:paddingEnd="12dp"
+                android:background="?selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_comment" />
+
+                <TextView
+                    android:id="@+id/tv_comment_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_hint" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 评论区（楼中楼） -->
+        <LinearLayout
+            android:id="@+id/ll_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:background="#F8F9FA"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/ll_comment_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- 评论输入 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/et_comment"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:hint="写评论..."
+                    android:textSize="13sp"
+                    android:background="@drawable/bg_edit_text"
+                    android:paddingHorizontal="12dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/btn_send_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="6dp"
+                    android:text="发送"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:background="?selectableItemBackground" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
