@@ -107,7 +107,8 @@ const handleLogin = async () => {
 
 .login-wrapper {
   display: flex;
-  width: 880px;
+  width: 92%;
+  max-width: 880px;
   min-height: 520px;
   background: #fff;
   border-radius: 16px;
@@ -119,12 +120,13 @@ const handleLogin = async () => {
 
 /* 左侧品牌区 */
 .brand-section {
-  width: 380px;
+  width: 340px;
+  flex-shrink: 0;
   background: linear-gradient(160deg, #1677ff 0%, #0958d9 50%, #003eb3 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px;
+  padding: 40px;
   position: relative;
 }
 .brand-section::after {
@@ -175,14 +177,15 @@ const handleLogin = async () => {
 /* 右侧表单区 */
 .form-section {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 56px;
+  padding: 40px 40px;
 }
 .form-inner {
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
 }
 .form-inner h2 {
   font-size: 26px;
@@ -197,11 +200,10 @@ const handleLogin = async () => {
 
 .custom-input {
   border-radius: 8px;
-  height: 48px;
 }
 .custom-input :deep(.ant-input) {
-  height: 48px;
   font-size: 15px;
+  padding: 10px 0;
 }
 
 .login-btn {

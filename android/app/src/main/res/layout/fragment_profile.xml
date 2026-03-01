@@ -1,86 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 个人中心 Fragment 布局 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 个人中心 - 渐变头部 + 白色统计卡片 + 功能列表 -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
-    <!-- 用户信息头部 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@android:drawable/ic_menu_myplaces" />
-
-        <TextView
-            android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textSize="20sp"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_bio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="14sp"
-            android:textColor="@color/text_secondary" />
-
-        <!-- 统计数据 -->
+        <!-- 渐变头部 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center">
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:id="@+id/tv_question_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="提问" android:textSize="12sp" android:textColor="@color/text_hint" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:id="@+id/tv_answer_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="回答" android:textSize="12sp" android:textColor="@color/text_hint" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:id="@+id/tv_follower_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="粉丝" android:textSize="12sp" android:textColor="@color/text_hint" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:id="@+id/tv_like_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/primary" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获赞" android:textSize="12sp" android:textColor="@color/text_hint" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+            android:orientation="vertical"
+            android:background="@drawable/bg_profile_header"
+            android:paddingTop="40dp"
+            android:paddingBottom="48dp"
+            android:gravity="center_horizontal">
 
-    <!-- 功能列表 -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="8dp"
-        app:cardCornerRadius="8dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
-            <TextView android:id="@+id/btn_my_questions" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的提问" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
-            <TextView android:id="@+id/btn_my_answers" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的回答" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
-            <TextView android:id="@+id/btn_my_favorites" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的收藏" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
-            <TextView android:id="@+id/btn_my_following" android:layout_width="match_parent" android:layout_height="48dp" android:text="  我的关注" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/text_primary" android:background="?selectableItemBackground" android:paddingStart="16dp" />
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
-            <TextView android:id="@+id/btn_logout" android:layout_width="match_parent" android:layout_height="48dp" android:text="  退出登录" android:gravity="center_vertical" android:textSize="16sp" android:textColor="@color/like_active" android:background="?selectableItemBackground" android:paddingStart="16dp" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                app:civ_border_width="3dp"
+                app:civ_border_color="#80FFFFFF" />
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:textSize="22sp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_bio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textSize="13sp"
+                android:textColor="#B0D4FF" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-</LinearLayout>
+
+        <!-- 统计卡片（上浮效果） -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="-32dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:gravity="center">
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/tv_question_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="22sp" android:textStyle="bold" android:textColor="@color/primary" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="提问" android:textSize="12sp" android:textColor="@color/text_hint" android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="36dp" android:background="@color/divider" />
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/tv_answer_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="22sp" android:textStyle="bold" android:textColor="#52C41A" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="回答" android:textSize="12sp" android:textColor="@color/text_hint" android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="36dp" android:background="@color/divider" />
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/tv_follower_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="22sp" android:textStyle="bold" android:textColor="#FA8C16" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="粉丝" android:textSize="12sp" android:textColor="@color/text_hint" android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="36dp" android:background="@color/divider" />
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/tv_like_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="22sp" android:textStyle="bold" android:textColor="#FF4D4F" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获赞" android:textSize="12sp" android:textColor="@color/text_hint" android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 功能列表 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dp">
+
+                <LinearLayout android:id="@+id/btn_my_questions" android:layout_width="match_parent" android:layout_height="54dp" android:gravity="center_vertical" android:paddingHorizontal="20dp" android:background="?selectableItemBackground">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="📝  我的提问" android:textSize="15sp" android:textColor="@color/text_primary" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textSize="20sp" android:textColor="@color/text_hint" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginHorizontal="20dp" />
+
+                <LinearLayout android:id="@+id/btn_my_answers" android:layout_width="match_parent" android:layout_height="54dp" android:gravity="center_vertical" android:paddingHorizontal="20dp" android:background="?selectableItemBackground">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="💬  我的回答" android:textSize="15sp" android:textColor="@color/text_primary" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textSize="20sp" android:textColor="@color/text_hint" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginHorizontal="20dp" />
+
+                <LinearLayout android:id="@+id/btn_my_favorites" android:layout_width="match_parent" android:layout_height="54dp" android:gravity="center_vertical" android:paddingHorizontal="20dp" android:background="?selectableItemBackground">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="❤️  我的收藏" android:textSize="15sp" android:textColor="@color/text_primary" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textSize="20sp" android:textColor="@color/text_hint" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginHorizontal="20dp" />
+
+                <LinearLayout android:id="@+id/btn_my_following" android:layout_width="match_parent" android:layout_height="54dp" android:gravity="center_vertical" android:paddingHorizontal="20dp" android:background="?selectableItemBackground">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="👥  我的关注" android:textSize="15sp" android:textColor="@color/text_primary" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="›" android:textSize="20sp" android:textColor="@color/text_hint" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 退出登录 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout android:id="@+id/btn_logout" android:layout_width="match_parent" android:layout_height="54dp" android:gravity="center" android:background="?selectableItemBackground">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="退出登录" android:textSize="15sp" android:textColor="#FF4D4F" android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

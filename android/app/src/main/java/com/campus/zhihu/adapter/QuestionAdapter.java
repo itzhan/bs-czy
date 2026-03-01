@@ -28,52 +28,76 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
     public void setData(JsonArray data) {
         items.clear();
         if (data != null) {
-            for (JsonElement e : data) {
-                items.add(e.getAsJsonObject());
-            }
+            for (JsonElement e : data) items.add(e.getAsJsonObject());
         }
         notifyDataSetChanged();
     }
 
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_question, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_question, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         JsonObject item = items.get(position);
         JsonObject question = item.has("question") ? item.getAsJsonObject("question") : item;
-        holder.tvTitle.setText(question.has("title") ? question.get("title").getAsString() : "");
-        String content = question.has("content") ? question.get("content").getAsString() : "";
-        holder.tvContent.setText(content.length() > 100 ? content.substring(0, 100) + "..." : content);
 
+        h.tvTitle.setText(getStr(question, "title"));
+        String content = getStr(question, "content");
+        h.tvContent.setText(content.length() > 100 ? content.substring(0, 100) + "..." : content);
+
+        // 作者
         if (item.has("author") && !item.get("author").isJsonNull()) {
-            JsonObject author = item.getAsJsonObject("author");
-            holder.tvAuthor.setText(author.has("nickname") ? author.get("nickname").getAsString() : "匿名用户");
+            h.tvAuthor.setText(getStr(item.getAsJsonObject("author"), "nickname"));
         } else {
-            holder.tvAuthor.setText("匿名用户");
+            h.tvAuthor.setText("匿名用户");
         }
 
-        int answers = question.has("answerCount") ? question.get("answerCount").getAsInt() : 0;
-        int likes = question.has("likeCount") ? question.get("likeCount").getAsInt() : 0;
-        int views = question.has("viewCount") ? question.get("viewCount").getAsInt() : 0;
-        holder.tvStats.setText(answers + "回答 · " + likes + "赞 · " + views + "浏览");
+        // 时间
+        String time = getStr(question, "createdAt");
+        if (time.length() > 10) time = time.substring(0, 10);
+        if (h.tvTime != null) h.tvTime.setText(time);
 
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(question));
+        // 统计
+        int answers = getInt(question, "answerCount");
+        int likes = getInt(question, "likeCount");
+        int views = getInt(question, "viewCount");
+        h.tvStats.setText(answers + " 回答 · " + likes + " 赞 · " + views + " 浏览");
+
+        // 标签（取第一个）
+        if (h.tvTag != null && item.has("tags") && item.get("tags").isJsonArray()) {
+            JsonArray tags = item.getAsJsonArray("tags");
+            if (tags.size() > 0) {
+                h.tvTag.setText(getStr(tags.get(0).getAsJsonObject(), "name"));
+                h.tvTag.setVisibility(View.VISIBLE);
+            } else {
+                h.tvTag.setVisibility(View.GONE);
+            }
+        }
+
+        h.itemView.setOnClickListener(v -> listener.onItemClick(question));
     }
 
     @Override public int getItemCount() { return items.size(); }
 
+    private String getStr(JsonObject o, String k) {
+        return o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsString() : "";
+    }
+    private int getInt(JsonObject o, String k) {
+        return o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsInt() : 0;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvContent, tvAuthor, tvStats;
+        TextView tvTitle, tvContent, tvAuthor, tvStats, tvTime, tvTag;
         ViewHolder(View v) {
             super(v);
             tvTitle = v.findViewById(R.id.tv_title);
             tvContent = v.findViewById(R.id.tv_content);
             tvAuthor = v.findViewById(R.id.tv_author);
             tvStats = v.findViewById(R.id.tv_stats);
+            tvTime = v.findViewById(R.id.tv_time);
+            tvTag = v.findViewById(R.id.tv_tag);
         }
     }
 }

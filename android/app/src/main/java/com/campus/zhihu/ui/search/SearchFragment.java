@@ -17,6 +17,7 @@ import com.campus.zhihu.data.remote.RetrofitClient;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,7 +33,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         api = RetrofitClient.createService(ApiService.class);
-        TextInputEditText etSearch = view.findViewById(R.id.et_search);
+        EditText etSearch = view.findViewById(R.id.et_search);
         ChipGroup chipGroup = view.findViewById(R.id.chip_group_tags);
         RecyclerView rv = view.findViewById(R.id.rv_results);
 
