@@ -24,8 +24,9 @@ import java.util.List;
  * 通用列表页：我的提问、我的回答、我的收藏、我的关注
  */
 public class UserListActivity extends AppCompatActivity {
-    public static final String EXTRA_TYPE = "type"; // questions, answers, favorites, following
+    public static final String EXTRA_TYPE = "type"; // questions, answers, favorites, following, followers
     public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_USER_ID = "userId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,9 @@ public class UserListActivity extends AppCompatActivity {
 
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        long userId = ZhihuApp.getInstance().getUserId();
+        // 支持传入其他用户的 ID，未传入则使用当前登录用户
+        long userId = getIntent().getLongExtra(EXTRA_USER_ID, -1);
+        if (userId == -1) userId = ZhihuApp.getInstance().getUserId();
         ApiService api = RetrofitClient.createService(ApiService.class);
 
         Call<JsonObject> call;
@@ -52,6 +55,7 @@ public class UserListActivity extends AppCompatActivity {
             case "answers": call = api.getUserAnswers(userId, 1, 100); break;
             case "favorites": call = api.getUserFavorites(userId, 1, 100); break;
             case "following": call = api.getFollowing(userId, 1, 100); break;
+            case "followers": call = api.getFollowers(userId, 1, 100); break;
             default: finish(); return;
         }
 
@@ -65,8 +69,8 @@ public class UserListActivity extends AppCompatActivity {
                         rv.setVisibility(View.GONE);
                         return;
                     }
-                    if ("following".equals(type)) {
-                        // 关注列表显示用户
+                    if ("following".equals(type) || "followers".equals(type)) {
+                        // 关注/粉丝列表显示用户
                         List<JsonObject> users = new ArrayList<>();
                         for (JsonElement e : records) users.add(e.getAsJsonObject());
                         rv.setAdapter(new UserAdapter(users));

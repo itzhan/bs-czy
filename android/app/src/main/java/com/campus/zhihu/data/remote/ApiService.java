@@ -141,4 +141,7 @@ public interface ApiService {
     // ===== 举报 =====
     @POST("api/reports")
     Call<JsonObject> createReport(@Body Map<String, Object> body);
+
+    @GET("api/reports/my")
+    Call<JsonObject> getMyReports(@Query("page") int page, @Query("size") int size);
 }

@@ -31,6 +31,7 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.btn_my_answers).setOnClickListener(v -> openList("answers", "我的回答"));
         view.findViewById(R.id.btn_my_favorites).setOnClickListener(v -> openList("favorites", "我的收藏"));
         view.findViewById(R.id.btn_my_following).setOnClickListener(v -> openList("following", "我的关注"));
+        view.findViewById(R.id.btn_my_reports).setOnClickListener(v -> startActivity(new Intent(getActivity(), MyReportsActivity.class)));
 
         view.findViewById(R.id.btn_logout).setOnClickListener(v -> {
             ZhihuApp.getInstance().logout();

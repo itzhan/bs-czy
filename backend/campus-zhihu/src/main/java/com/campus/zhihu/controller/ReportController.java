@@ -22,4 +22,17 @@ public class ReportController {
         reportMapper.insert(r);
         return Result.success("举报提交成功");
     }
+
+    /** 查看自己的举报记录 */
+    @GetMapping("/my")
+    public Result<?> myReports(Authentication auth,
+                               @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "20") int size) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Report> p = reportMapper.selectPage(
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page, size),
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Report>()
+                        .eq(Report::getUserId, (Long) auth.getPrincipal())
+                        .orderByDesc(Report::getCreatedAt));
+        return Result.success(com.campus.zhihu.common.PageResult.of(p));
+    }
 }

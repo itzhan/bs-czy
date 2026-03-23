@@ -20,6 +20,7 @@ public class AnswerService {
     private final AnswerMapper answerMapper;
     private final QuestionMapper questionMapper;
     private final UserMapper userMapper;
+    private final NotificationService notificationService;
 
     @Transactional
     public Answer create(Long userId, Long questionId, AnswerDTO dto) {
@@ -79,5 +80,12 @@ public class AnswerService {
         }
         a.setIsAccepted(1); answerMapper.updateById(a);
         q.setAcceptedAnswerId(answerId); questionMapper.updateById(q);
+        // 通知回答作者
+        if (!a.getUserId().equals(userId)) {
+            String preview = a.getContent().length() > 20 ? a.getContent().substring(0, 20) + "..." : a.getContent();
+            notificationService.send(a.getUserId(), userId, 3, "回答被采纳",
+                    "您在问题「" + q.getTitle() + "」下的回答「" + preview + "」已被提问者采纳！",
+                    2, answerId);
+        }
     }
 }

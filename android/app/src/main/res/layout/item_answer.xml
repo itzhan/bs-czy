@@ -130,6 +130,44 @@
                     android:textSize="13sp"
                     android:textColor="@color/text_hint" />
             </LinearLayout>
+
+            <!-- 举报 -->
+            <LinearLayout
+                android:id="@+id/btn_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp"
+                android:paddingEnd="4dp"
+                android:background="?selectableItemBackgroundBorderless">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_report"
+                    app:tint="@color/text_hint" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="举报"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_hint" />
+            </LinearLayout>
+
+            <!-- 采纳 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_accept"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="12dp"
+                android:text="✅ 采纳"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:cornerRadius="16dp" />
         </LinearLayout>
 
         <!-- 评论区（楼中楼） -->

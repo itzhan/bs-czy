@@ -1,12 +1,15 @@
 package com.campus.zhihu.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.campus.zhihu.R;
+import com.campus.zhihu.ui.profile.UserDetailActivity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -49,7 +52,19 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
         // 作者
         if (item.has("author") && !item.get("author").isJsonNull()) {
-            h.tvAuthor.setText(getStr(item.getAsJsonObject("author"), "nickname"));
+            JsonObject author = item.getAsJsonObject("author");
+            h.tvAuthor.setText(getStr(author, "nickname"));
+            // 作者头像和名称可点击跳转到用户详情页
+            long authorId = author.has("id") && !author.get("id").isJsonNull() ? author.get("id").getAsLong() : -1;
+            if (authorId != -1) {
+                View.OnClickListener authorClick = v -> {
+                    Intent intent = new Intent(v.getContext(), UserDetailActivity.class);
+                    intent.putExtra(UserDetailActivity.EXTRA_USER_ID, authorId);
+                    v.getContext().startActivity(intent);
+                };
+                h.tvAuthor.setOnClickListener(authorClick);
+                if (h.ivAvatar != null) h.ivAvatar.setOnClickListener(authorClick);
+            }
         } else {
             h.tvAuthor.setText("匿名用户");
         }
@@ -90,6 +105,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvContent, tvAuthor, tvStats, tvTime, tvTag;
+        ImageView ivAvatar;
         ViewHolder(View v) {
             super(v);
             tvTitle = v.findViewById(R.id.tv_title);
@@ -98,6 +114,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             tvStats = v.findViewById(R.id.tv_stats);
             tvTime = v.findViewById(R.id.tv_time);
             tvTag = v.findViewById(R.id.tv_tag);
+            ivAvatar = v.findViewById(R.id.iv_avatar);
         }
     }
 }

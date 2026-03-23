@@ -35,8 +35,7 @@ public class AuthActivity extends AppCompatActivity {
 
         btnLogin.setOnClickListener(v -> performLogin());
         btnGoRegister.setOnClickListener(v -> {
-            // TODO: Navigate to register page
-            Toast.makeText(this, "注册功能开发中", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(AuthActivity.this, RegisterActivity.class));
         });
     }
 

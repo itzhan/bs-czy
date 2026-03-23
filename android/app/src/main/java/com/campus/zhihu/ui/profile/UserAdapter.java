@@ -1,5 +1,6 @@
 package com.campus.zhihu.ui.profile;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 /**
- * 用户列表适配器 - 用于关注列表
+ * 用户列表适配器 - 用于关注/粉丝列表，可点击跳转用户详情
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
     private final List<JsonObject> users;
@@ -31,6 +32,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
         String dept = user.has("department") && !user.get("department").isJsonNull() ? user.get("department").getAsString() : "";
         holder.tvTitle.setText(nickname);
         holder.tvContent.setText(dept);
+
+        // 点击跳转到用户详情页
+        long userId = user.has("id") && !user.get("id").isJsonNull() ? user.get("id").getAsLong() : -1;
+        if (userId != -1) {
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), UserDetailActivity.class);
+                intent.putExtra(UserDetailActivity.EXTRA_USER_ID, userId);
+                v.getContext().startActivity(intent);
+            });
+        }
     }
 
     @Override public int getItemCount() { return users.size(); }

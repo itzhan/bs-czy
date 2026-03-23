@@ -26,10 +26,12 @@
         </activity>
 
         <activity android:name=".ui.auth.AuthActivity" android:exported="false" />
+        <activity android:name=".ui.auth.RegisterActivity" android:exported="false" />
         <activity android:name=".ui.home.MainActivity" android:exported="false" />
         <activity android:name=".ui.question.QuestionDetailActivity" android:exported="false" />
         <activity android:name=".ui.question.AskQuestionActivity" android:exported="false" />
         <activity android:name=".ui.profile.UserDetailActivity" android:exported="false" />
         <activity android:name=".ui.profile.UserListActivity" android:exported="false" />
+        <activity android:name=".ui.profile.MyReportsActivity" android:exported="false" />
     </application>
 </manifest>

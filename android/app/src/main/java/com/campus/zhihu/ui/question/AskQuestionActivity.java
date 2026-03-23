@@ -9,15 +9,27 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.view.Gravity;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AskQuestionActivity extends AppCompatActivity {
+    private ChipGroup chipGroup;
+    private final List<Long> allTagIds = new ArrayList<>();
+    private final List<String> allTagNames = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +61,24 @@ public class AskQuestionActivity extends AppCompatActivity {
         params.topMargin = 16;
         layout.addView(contentLayout, params);
 
+        // 标签选择区域
+        TextView tvLabel = new TextView(this);
+        tvLabel.setText("选择分类标签");
+        tvLabel.setTextSize(14);
+        tvLabel.setTextColor(0xFF666666);
+        params = new LinearLayout.LayoutParams(-1, -2);
+        params.topMargin = 20;
+        layout.addView(tvLabel, params);
+
+        chipGroup = new ChipGroup(this);
+        chipGroup.setSingleSelection(false);
+        params = new LinearLayout.LayoutParams(-1, -2);
+        params.topMargin = 8;
+        layout.addView(chipGroup, params);
+
+        // 加载标签列表
+        loadTags();
+
         MaterialButton btnSubmit = new MaterialButton(this);
         btnSubmit.setText("发布");
         params = new LinearLayout.LayoutParams(-1, -2);
@@ -62,10 +92,21 @@ public class AskQuestionActivity extends AppCompatActivity {
                 Toast.makeText(this, "标题和内容不能为空", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // 收集选中的标签ID
+            List<Long> selectedTagIds = new ArrayList<>();
+            for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                Chip chip = (Chip) chipGroup.getChildAt(i);
+                if (chip.isChecked()) {
+                    selectedTagIds.add(allTagIds.get(i));
+                }
+            }
             Map<String, Object> body = new HashMap<>();
             body.put("title", title);
             body.put("content", content);
             body.put("status", 1);
+            if (!selectedTagIds.isEmpty()) {
+                body.put("tagIds", selectedTagIds);
+            }
             RetrofitClient.createService(ApiService.class).createQuestion(body).enqueue(new Callback<JsonObject>() {
                 @Override public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().get("code").getAsInt() == 200) {
@@ -78,5 +119,35 @@ public class AskQuestionActivity extends AppCompatActivity {
         });
 
         setContentView(layout);
+    }
+
+    private void loadTags() {
+        RetrofitClient.createService(ApiService.class).getTags().enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (isFinishing()) return;
+                if (response.isSuccessful() && response.body() != null && response.body().get("code").getAsInt() == 200) {
+                    JsonArray tags = response.body().getAsJsonArray("data");
+                    if (tags == null) return;
+                    for (JsonElement e : tags) {
+                        JsonObject tag = e.getAsJsonObject();
+                        long tagId = tag.get("id").getAsLong();
+                        String tagName = tag.has("name") && !tag.get("name").isJsonNull() ? tag.get("name").getAsString() : "";
+                        allTagIds.add(tagId);
+                        allTagNames.add(tagName);
+
+                        Chip chip = new Chip(AskQuestionActivity.this);
+                        chip.setText(tagName);
+                        chip.setCheckable(true);
+                        chip.setCheckedIconVisible(true);
+                        chip.setChipBackgroundColorResource(com.google.android.material.R.color.m3_chip_background_color);
+                        chipGroup.addView(chip);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {}
+        });
     }
 }

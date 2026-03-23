@@ -1,5 +1,6 @@
 package com.campus.zhihu.ui.question;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campus.zhihu.R;
 import com.campus.zhihu.data.remote.ApiService;
 import com.campus.zhihu.data.remote.RetrofitClient;
+import com.campus.zhihu.ui.profile.UserDetailActivity;
+import com.campus.zhihu.util.ReportDialog;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -32,6 +35,8 @@ import retrofit2.Response;
 
 public class QuestionDetailActivity extends AppCompatActivity {
     private long questionId;
+    private long questionAuthorId = -1;
+    private long currentUserId = -1;
     private ApiService api;
     private RecyclerView rvAnswers;
     private TextView tvNoAnswer, tvAnswerCount;
@@ -50,6 +55,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
+        // 举报菜单
+        toolbar.inflateMenu(R.menu.menu_question_detail);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_report) {
+                ReportDialog.show(this, 1, questionId); // 1=问题
+                return true;
+            }
+            return false;
+        });
 
         rvAnswers = findViewById(R.id.rv_answers);
         rvAnswers.setLayoutManager(new LinearLayoutManager(this));
@@ -64,6 +78,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
         EditText etAnswer = findViewById(R.id.et_answer);
         MaterialButton btnSubmit = findViewById(R.id.btn_submit);
 
+        loadCurrentUser();
         loadQuestion();
         loadAnswers();
         loadLikeStatus();
@@ -135,6 +150,18 @@ public class QuestionDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void loadCurrentUser() {
+        api.getCurrentUser().enqueue(new Callback<JsonObject>() {
+            @Override public void onResponse(Call<JsonObject> c, Response<JsonObject> r) {
+                if (r.isSuccessful() && r.body() != null && r.body().get("code").getAsInt() == 200) {
+                    JsonObject user = r.body().getAsJsonObject("data");
+                    currentUserId = user.has("id") && !user.get("id").isJsonNull() ? user.get("id").getAsLong() : -1;
+                }
+            }
+            @Override public void onFailure(Call<JsonObject> c, Throwable t) {}
+        });
+    }
+
     private void loadQuestion() {
         api.getQuestion(questionId).enqueue(new Callback<JsonObject>() {
             @Override public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -144,8 +171,22 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
                 ((TextView) findViewById(R.id.tv_title)).setText(getStr(q, "title"));
                 ((TextView) findViewById(R.id.tv_content)).setText(getStr(q, "content"));
-                if (data.has("author") && !data.get("author").isJsonNull())
-                    ((TextView) findViewById(R.id.tv_author)).setText(getStr(data.getAsJsonObject("author"), "nickname"));
+                if (data.has("author") && !data.get("author").isJsonNull()) {
+                    JsonObject author = data.getAsJsonObject("author");
+                    ((TextView) findViewById(R.id.tv_author)).setText(getStr(author, "nickname"));
+                    // 记录问题作者ID
+                    questionAuthorId = author.has("id") && !author.get("id").isJsonNull() ? author.get("id").getAsLong() : -1;
+                    long authorId = questionAuthorId;
+                    // 作者名可点击跳转到用户详情页
+                    if (authorId != -1) {
+                        View.OnClickListener authorClick = v -> {
+                            Intent intent = new Intent(QuestionDetailActivity.this, UserDetailActivity.class);
+                            intent.putExtra(UserDetailActivity.EXTRA_USER_ID, authorId);
+                            startActivity(intent);
+                        };
+                        findViewById(R.id.tv_author).setOnClickListener(authorClick);
+                    }
+                }
                 String time = getStr(q, "createdAt"); if (time.length() > 10) time = time.substring(0, 10);
                 ((TextView) findViewById(R.id.tv_time)).setText(time);
 
@@ -183,7 +224,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                 tvNoAnswer.setVisibility(View.GONE); rvAnswers.setVisibility(View.VISIBLE);
                 List<JsonObject> items = new ArrayList<>();
                 for (JsonElement e : records) items.add(e.getAsJsonObject());
-                rvAnswers.setAdapter(new AnswerAdapter(items, api));
+                rvAnswers.setAdapter(new AnswerAdapter(items, api, questionAuthorId, currentUserId, () -> { loadQuestion(); loadAnswers(); }));
             }
             @Override public void onFailure(Call<JsonObject> call, Throwable t) {}
         });
@@ -192,11 +233,19 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private String getStr(JsonObject o, String k) { return o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsString() : ""; }
     private int getInt(JsonObject o, String k) { return o.has(k) && !o.get(k).isJsonNull() ? o.get(k).getAsInt() : 0; }
 
+    interface OnAcceptCallback { void onAccepted(); }
+
     // ===== 回答适配器（含楼中楼评论） =====
     private static class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.VH> {
         private final List<JsonObject> items;
         private final ApiService api;
-        AnswerAdapter(List<JsonObject> items, ApiService api) { this.items = items; this.api = api; }
+        private final long questionAuthorId;
+        private final long currentUserId;
+        private final OnAcceptCallback acceptCallback;
+        AnswerAdapter(List<JsonObject> items, ApiService api, long questionAuthorId, long currentUserId, OnAcceptCallback cb) {
+            this.items = items; this.api = api; this.questionAuthorId = questionAuthorId;
+            this.currentUserId = currentUserId; this.acceptCallback = cb;
+        }
 
         @Override public VH onCreateViewHolder(ViewGroup parent, int viewType) {
             return new VH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_answer, parent, false));
@@ -217,6 +266,25 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
             int accepted = a.has("isAccepted") && !a.get("isAccepted").isJsonNull() ? a.get("isAccepted").getAsInt() : 0;
             h.tvAccepted.setVisibility(accepted == 1 ? View.VISIBLE : View.GONE);
+
+            // 采纳按钮：仅问题作者可见、且回答未被采纳
+            boolean isOwner = currentUserId != -1 && currentUserId == questionAuthorId;
+            if (isOwner && accepted == 0) {
+                h.btnAccept.setVisibility(View.VISIBLE);
+                h.btnAccept.setOnClickListener(v -> {
+                    api.acceptAnswer(answerId).enqueue(new Callback<JsonObject>() {
+                        @Override public void onResponse(Call<JsonObject> c, Response<JsonObject> r) {
+                            if (r.isSuccessful()) {
+                                android.widget.Toast.makeText(v.getContext(), "已采纳该回答", android.widget.Toast.LENGTH_SHORT).show();
+                                if (acceptCallback != null) acceptCallback.onAccepted();
+                            }
+                        }
+                        @Override public void onFailure(Call<JsonObject> c, Throwable t) {}
+                    });
+                });
+            } else {
+                h.btnAccept.setVisibility(View.GONE);
+            }
 
             int likeCount = getInt(a, "likeCount");
             int commentCount = getInt(a, "commentCount");
@@ -277,6 +345,9 @@ public class QuestionDetailActivity extends AppCompatActivity {
                     @Override public void onFailure(Call<JsonObject> c, Throwable t) {}
                 });
             });
+
+            // 举报回答
+            h.btnReport.setOnClickListener(v -> ReportDialog.show(v.getContext(), 2, answerId));
         }
 
         private void loadComments(VH h, long answerId) {
@@ -370,7 +441,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
         static class VH extends RecyclerView.ViewHolder {
             TextView tvAuthor, tvTime, tvContent, tvAccepted, tvLikeCount, tvCommentCount;
             ImageView ivLike;
-            View btnLike, btnComment;
+            View btnLike, btnComment, btnReport, btnAccept;
             LinearLayout llComments, llCommentList;
             EditText etComment;
             View btnSendComment;
@@ -381,6 +452,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                 tvLikeCount = v.findViewById(R.id.tv_like_count); tvCommentCount = v.findViewById(R.id.tv_comment_count);
                 ivLike = v.findViewById(R.id.iv_like);
                 btnLike = v.findViewById(R.id.btn_like); btnComment = v.findViewById(R.id.btn_comment);
+                btnReport = v.findViewById(R.id.btn_report); btnAccept = v.findViewById(R.id.btn_accept);
                 llComments = v.findViewById(R.id.ll_comments); llCommentList = v.findViewById(R.id.ll_comment_list);
                 etComment = v.findViewById(R.id.et_comment); btnSendComment = v.findViewById(R.id.btn_send_comment);
             }

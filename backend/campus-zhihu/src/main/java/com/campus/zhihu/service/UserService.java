@@ -21,6 +21,7 @@ public class UserService {
     private final QuestionMapper questionMapper;
     private final AnswerMapper answerMapper;
     private final UserFavoriteMapper userFavoriteMapper;
+    private final NotificationService notificationService;
 
     public User getUserById(Long id) {
         User user = userMapper.selectById(id);
@@ -60,6 +61,10 @@ public class UserService {
             userFollowMapper.insert(follow);
             userMapper.update(null, new LambdaUpdateWrapper<User>().eq(User::getId, userId).setSql("following_count = following_count + 1"));
             userMapper.update(null, new LambdaUpdateWrapper<User>().eq(User::getId, targetUserId).setSql("follower_count = follower_count + 1"));
+            // 通知被关注者
+            User follower = userMapper.selectById(userId);
+            String followerName = follower != null && follower.getNickname() != null ? follower.getNickname() : "有人";
+            notificationService.send(targetUserId, userId, 2, "新粉丝", followerName + " 关注了您", null, null);
             return true;
         }
     }
