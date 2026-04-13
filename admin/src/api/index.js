@@ -44,3 +44,8 @@ export const getTags = () => request.get('/admin/tags')
 export const createTag = (data) => request.post('/admin/tags', data)
 export const updateTag = (id, data) => request.put(`/admin/tags/${id}`, data)
 export const deleteTag = (id) => request.delete(`/admin/tags/${id}`)
+
+// AI 配置
+export const getAiConfig = () => request.get('/admin/ai-config')
+export const updateAiConfig = (data) => request.put('/admin/ai-config', data)
+export const testAiConfig = (data) => request.post('/admin/ai-config/test', data, { timeout: 60000 })

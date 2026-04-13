@@ -14,6 +14,7 @@ const routes = [
       { path: 'comments', name: 'Comments', component: () => import('../views/comment/index.vue'), meta: { title: '评论管理', icon: 'ChatLineSquare' } },
       { path: 'tags', name: 'Tags', component: () => import('../views/tag/index.vue'), meta: { title: '标签管理', icon: 'Collection' } },
       { path: 'reports', name: 'Reports', component: () => import('../views/report/index.vue'), meta: { title: '举报管理', icon: 'Warning' } },
+      { path: 'ai-config', name: 'AiConfig', component: () => import('../views/ai-config/index.vue'), meta: { title: 'AI配置', icon: 'Robot' } },
     ]
   }
 ]

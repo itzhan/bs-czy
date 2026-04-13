@@ -39,6 +39,10 @@
           <template #icon><WarningOutlined /></template>
           举报管理
         </a-menu-item>
+        <a-menu-item key="/ai-config">
+          <template #icon><RobotOutlined /></template>
+          AI 配置
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -85,7 +89,7 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   DashboardOutlined, UserOutlined, QuestionCircleOutlined, MessageOutlined,
   CommentOutlined, TagsOutlined, WarningOutlined, LogoutOutlined,
-  MenuFoldOutlined, MenuUnfoldOutlined
+  MenuFoldOutlined, MenuUnfoldOutlined, RobotOutlined
 } from '@ant-design/icons-vue'
 
 const router = useRouter()
@@ -94,7 +98,8 @@ const collapsed = ref(false)
 
 const titleMap = {
   '/dashboard': '数据概览', '/users': '用户管理', '/questions': '问题管理',
-  '/answers': '回答管理', '/comments': '评论管理', '/tags': '标签管理', '/reports': '举报管理'
+  '/answers': '回答管理', '/comments': '评论管理', '/tags': '标签管理', '/reports': '举报管理',
+  '/ai-config': 'AI配置'
 }
 const currentTitle = computed(() => titleMap[route.path] || '')
 const username = computed(() => localStorage.getItem('admin_username') || '管理员')

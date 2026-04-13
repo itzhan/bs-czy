@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.campus.zhihu.R;
+import com.campus.zhihu.ZhihuApp;
 import com.campus.zhihu.data.remote.ApiService;
 import com.campus.zhihu.data.remote.RetrofitClient;
 import com.campus.zhihu.ui.profile.UserDetailActivity;
@@ -25,10 +27,16 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,6 +51,11 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private boolean isLiked = false, isFavorited = false;
     private ImageView ivLike, ivFavorite;
     private TextView tvLikeCount, tvFavCount;
+    private View cardAiAnswer;
+    private TextView tvAiAnswer;
+    private ProgressBar aiLoading;
+    private MaterialButton btnAiAnswer;
+    private okhttp3.Call aiCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +97,13 @@ public class QuestionDetailActivity extends AppCompatActivity {
         loadLikeStatus();
         loadFavoriteStatus();
 
+        // AI 智能回答
+        cardAiAnswer = findViewById(R.id.card_ai_answer);
+        tvAiAnswer = findViewById(R.id.tv_ai_answer);
+        aiLoading = findViewById(R.id.ai_loading);
+        btnAiAnswer = findViewById(R.id.btn_ai_answer);
+        btnAiAnswer.setOnClickListener(v -> startAiChat());
+
         // 点赞问题
         findViewById(R.id.btn_like).setOnClickListener(v -> {
             Map<String, Object> body = new HashMap<>();
@@ -124,6 +144,98 @@ public class QuestionDetailActivity extends AppCompatActivity {
                 @Override public void onFailure(Call<JsonObject> c, Throwable t) {}
             });
         });
+    }
+
+    private void startAiChat() {
+        cardAiAnswer.setVisibility(View.VISIBLE);
+        tvAiAnswer.setText("");
+        aiLoading.setVisibility(View.VISIBLE);
+        btnAiAnswer.setEnabled(false);
+        btnAiAnswer.setText("AI 回答中...");
+
+        String token = ZhihuApp.getInstance().getToken();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(180, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(ZhihuApp.BASE_URL + "api/ai/chat?questionId=" + questionId)
+                .header("Authorization", "Bearer " + token)
+                .build();
+
+        aiCall = client.newCall(request);
+        aiCall.enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    aiLoading.setVisibility(View.GONE);
+                    btnAiAnswer.setEnabled(true);
+                    btnAiAnswer.setText("AI 智能回答");
+                    tvAiAnswer.setText("AI 回答失败，请稍后重试");
+                });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) {
+                try (ResponseBody body = response.body()) {
+                    if (!response.isSuccessful() || body == null) {
+                        runOnUiThread(() -> {
+                            aiLoading.setVisibility(View.GONE);
+                            btnAiAnswer.setEnabled(true);
+                            btnAiAnswer.setText("AI 智能回答");
+                            tvAiAnswer.setText("AI 服务暂时不可用");
+                        });
+                        return;
+                    }
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(body.byteStream(), "UTF-8"));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("data:")) {
+                            String data = line.substring(5).trim();
+                            if ("[DONE]".equals(data)) break;
+                            if (data.isEmpty()) continue;
+                            // 检查是否是错误信息
+                            if (data.startsWith("{") && data.contains("\"error\"")) {
+                                try {
+                                    JsonObject err = com.google.gson.JsonParser.parseString(data).getAsJsonObject();
+                                    String errorMsg = err.has("error") ? err.get("error").getAsString() : "AI 回答失败";
+                                    runOnUiThread(() -> tvAiAnswer.setText(errorMsg));
+                                } catch (Exception ignored) {
+                                    sb.append(data);
+                                    runOnUiThread(() -> tvAiAnswer.setText(sb.toString()));
+                                }
+                            } else {
+                                sb.append(data);
+                                String text = sb.toString();
+                                runOnUiThread(() -> tvAiAnswer.setText(text));
+                            }
+                        }
+                    }
+                    runOnUiThread(() -> {
+                        aiLoading.setVisibility(View.GONE);
+                        btnAiAnswer.setEnabled(true);
+                        btnAiAnswer.setText("重新 AI 回答");
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        aiLoading.setVisibility(View.GONE);
+                        btnAiAnswer.setEnabled(true);
+                        btnAiAnswer.setText("AI 智能回答");
+                        tvAiAnswer.setText("AI 回答异常：" + e.getMessage());
+                    });
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (aiCall != null && !aiCall.isCanceled()) {
+            aiCall.cancel();
+        }
     }
 
     private void loadLikeStatus() {
