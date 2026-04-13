@@ -218,6 +218,13 @@ INSERT INTO `report` (`user_id`,`target_type`,`target_id`,`reason`,`description`
 (6,3,5,3,'评论内容不友善',1,'2026-02-01 15:00:00'),
 (9,1,31,5,'与学术无关的吐槽帖',0,'2026-02-28 09:30:00');
 
+-- AI 默认配置
+INSERT INTO `system_config` (`config_key`, `config_value`, `description`) VALUES
+('ai_api_key', '', '硅基流动 API Key'),
+('ai_model', 'deepseek-ai/DeepSeek-V2.5', 'AI 模型名称'),
+('ai_base_url', 'https://api.siliconflow.cn/v1', 'AI API 地址'),
+('ai_system_prompt', '你是一个校园知识问答助手。请根据用户的问题，给出详细、准确、有帮助的回答。回答要条理清晰，如果涉及多个要点，请使用编号列表格式。', 'AI 系统提示词');
+
 -- 修正用户统计数据（根据实际关联数据计算）
 UPDATE `user` u SET
   question_count = (SELECT COUNT(*) FROM question WHERE user_id = u.id AND status = 1),
